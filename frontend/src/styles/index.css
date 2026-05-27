@@ -1,0 +1,40 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  min-height: 100vh;
+  background: #020814;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Font Sizes */
+.font-xs {
+  font-size: 0.6rem;
+}
+
+.font-sm {
+  font-size: 0.65rem;
+}
+
+.font-base {
+  font-size: 0.7rem;
+}
+
+.font-md {
+  font-size: 0.75rem;
+}
+
+.font-lg {
+  font-size: 1rem;
+}
+
+.font-xl {
+  font-size: 1.25rem;
+}
