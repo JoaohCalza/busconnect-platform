@@ -5,31 +5,65 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompaniesController;
+use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\DriverController;
+use App\Http\Controllers\TripRequestController;
+use App\Http\Controllers\TripController;
 
-// Auth routes
-Route::post('/auth/login', [AuthController::class, 'login']);
+// ── Auth ──────────────────────────────────────────────────────────────────────
+Route::post('/auth/login',    [AuthController::class, 'login']);
 Route::post('/auth/register', [AuthController::class, 'register']);
-Route::post('/auth/logout', [AuthController::class, 'logout']);
-Route::get('/auth/me', [AuthController::class, 'me']);
+Route::post('/auth/logout',   [AuthController::class, 'logout']);
+Route::get('/auth/me',        [AuthController::class, 'me']);
 
-Route::get('/user/profile', [UserController::class, 'profile']);
-Route::put('/user/profile', [UserController::class, 'updateProfile']);
+// ── User / Profile ────────────────────────────────────────────────────────────
+Route::get('/user/profile',  [UserController::class, 'profile']);
+Route::put('/user/profile',  [UserController::class, 'updateProfile']);
 
-// Company routes
-Route::get('/companies/{id}', [CompaniesController::class, 'show']);
-Route::put('/companies/{id}', [CompaniesController::class, 'update']);
+Route::post('/users',                        [UserController::class, 'store']);
+Route::get('/users/company/{company_id}',    [UserController::class, 'index']);
+Route::get('/users/{id}',                    [UserController::class, 'show']);
+Route::put('/users/{id}',                    [UserController::class, 'update']);
+Route::delete('/users/{id}',                 [UserController::class, 'destroy']);
 
-// User routes
-Route::post('/users', [UserController::class, 'store']);
-Route::get('/users/company/{company_id}', [UserController::class, 'index']);
-Route::get('/users/{id}', [UserController::class, 'show']);
-Route::put('/users/{id}', [UserController::class, 'update']);
-Route::delete('/users/{id}', [UserController::class, 'destroy']);
+// ── Companies ─────────────────────────────────────────────────────────────────
+Route::get('/companies/{id}',  [CompaniesController::class, 'show']);
+Route::put('/companies/{id}',  [CompaniesController::class, 'update']);
 
-// Admin routes
+// ── Vehicles ──────────────────────────────────────────────────────────────────
+Route::get('/vehicles',                             [VehicleController::class, 'index']);   // ?company_id=X ou catálogo público
+Route::get('/vehicles/{id}/unavailable-dates',      [VehicleController::class, 'unavailableDates']);
+Route::get('/vehicles/{id}',                        [VehicleController::class, 'show']);
+Route::post('/vehicles',        [VehicleController::class, 'store']);
+Route::put('/vehicles/{id}',    [VehicleController::class, 'update']);
+Route::delete('/vehicles/{id}', [VehicleController::class, 'destroy']);
+
+// ── Drivers ───────────────────────────────────────────────────────────────────
+Route::get('/drivers',         [DriverController::class, 'index']);     // ?company_id=X
+Route::get('/drivers/{id}',    [DriverController::class, 'show']);
+Route::post('/drivers',        [DriverController::class, 'store']);
+Route::put('/drivers/{id}',    [DriverController::class, 'update']);
+Route::delete('/drivers/{id}', [DriverController::class, 'destroy']);
+
+// ── Trip Requests ─────────────────────────────────────────────────────────────
+Route::get('/trip-requests',                       [TripRequestController::class, 'index']);       // ?client_id=X ou ?company_id=X
+Route::get('/trip-requests/{id}',                  [TripRequestController::class, 'show']);
+Route::post('/trip-requests',                      [TripRequestController::class, 'store']);
+Route::put('/trip-requests/{id}/status',           [TripRequestController::class, 'updateStatus']);
+Route::delete('/trip-requests/{id}',               [TripRequestController::class, 'destroy']);
+
+// ── Trips ─────────────────────────────────────────────────────────────────────
+Route::get('/trips',         [TripController::class, 'index']);          // ?company_id=X ou ?client_id=X
+Route::get('/trips/{id}',    [TripController::class, 'show']);
+Route::post('/trips',        [TripController::class, 'store']);
+Route::put('/trips/{id}',    [TripController::class, 'update']);
+Route::delete('/trips/{id}', [TripController::class, 'destroy']);
+
+// ── Admin ─────────────────────────────────────────────────────────────────────
 Route::get('/admin/users', function () {
-    return \App\Models\User::where('account_type', '!=', 'EMPRESA_ADMIN')
-                ->where('account_type', '!=', 'ADMIN')->get();
+    return \App\Models\User::whereNotIn('account_type', ['ADMIN', 'EMPRESA_ADMIN'])
+                ->with('company:id,name')
+                ->get(['id', 'name', 'email', 'phone', 'account_type', 'company_id', 'created_at']);
 });
 
 Route::get('/admin/companies', function () {
@@ -38,9 +72,7 @@ Route::get('/admin/companies', function () {
 
 Route::put('/admin/companies/{id}/approve', function ($id) {
     $company = \App\Models\Company::find($id);
-    if (!$company) {
-        return response()->json(['message' => 'Company not found'], 404);
-    }
+    if (!$company) return response()->json(['message' => 'Company not found'], 404);
     $company->active = 3;
     $company->save();
     return response()->json($company);
@@ -48,9 +80,7 @@ Route::put('/admin/companies/{id}/approve', function ($id) {
 
 Route::put('/admin/companies/{id}/reject', function ($id) {
     $company = \App\Models\Company::find($id);
-    if (!$company) {
-        return response()->json(['message' => 'Company not found'], 404);
-    }
+    if (!$company) return response()->json(['message' => 'Company not found'], 404);
     $company->active = 2;
     $company->save();
     return response()->json($company);

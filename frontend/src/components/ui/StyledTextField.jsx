@@ -6,8 +6,6 @@ export default function StyledTextField({
   inputProps,
   ...rest 
 }) {
-  console.log('endAdornment recebido:', endAdornment)
-
   return (
     <TextField
       label={label}

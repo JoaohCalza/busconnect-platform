@@ -80,18 +80,25 @@ class UserController extends Controller
         return response()->json(['message' => 'User deleted']);
     }
 
-    public function profile(Request $request)
-{
-    $user = $request->user();
-    if (!$user) {
-        return response()->json(['message' => 'Unauthenticated'], 401);
+    private function resolveUser(Request $request): ?User
+    {
+        $token = $request->bearerToken();
+        if (!$token) return null;
+        return User::where('api_token', $token)->first();
     }
-    return response()->json($user);
-}
+
+    public function profile(Request $request)
+    {
+        $user = $this->resolveUser($request);
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+        return response()->json($user);
+    }
 
     public function updateProfile(Request $request)
     {
-        $user = $request->user();
+        $user = $this->resolveUser($request);
         if (!$user) {
             return response()->json(['message' => 'Unauthenticated'], 401);
         }

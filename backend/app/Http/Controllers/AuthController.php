@@ -21,12 +21,20 @@ class AuthController extends Controller
             ->orWhere('name', $validated['email'])
             ->first();
 
-        if (!$user || !Hash::check($validated['password'], $user->password)) {
+        $passwordValid = false;
+        try {
+            $passwordValid = $user && Hash::check($validated['password'], $user->password);
+        } catch (\RuntimeException $e) {
+            // senha não está em bcrypt — credencial inválida
+        }
+
+        if (!$passwordValid) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
-        // Generate a simple token (in production, use Laravel Sanctum or Passport)
         $token = Str::random(60);
+        $user->api_token = $token;
+        $user->save();
 
         return response()->json([
             'user' => $this->formatUser($user),
@@ -70,9 +78,10 @@ class AuthController extends Controller
             $validated['company_id'] = $company->id;
         }
 
-        $user = User::create($validated);
-
         $token = Str::random(60);
+        $validated['api_token'] = $token;
+
+        $user = User::create($validated);
 
         return response()->json([
             'user' => $this->formatUser($user),

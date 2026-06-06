@@ -24,4 +24,29 @@ class Company extends Model
     protected $casts = [
         'active' => 'integer',
     ];
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    public function vehicles()
+    {
+        return $this->hasMany(Vehicle::class);
+    }
+
+    public function drivers()
+    {
+        return $this->hasMany(Driver::class);
+    }
+
+    public function tripRequests()
+    {
+        return $this->hasMany(TripRequest::class);
+    }
+
+    public function trips()
+    {
+        return $this->hasMany(Trip::class);
+    }
 }
