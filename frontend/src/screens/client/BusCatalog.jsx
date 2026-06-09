@@ -77,6 +77,10 @@ function RequestDialog({ open, onClose, vehicle, user, onSuccess }) {
 
   const conflict = isConflict(form.departure_date)
 
+  const exceedsCapacity =
+  vehicle?.capacity &&
+  Number(form.passengers) > Number(vehicle.capacity)
+
   const set = (k) => (e) => setForm(p => ({ ...p, [k]: e.target.value }))
 
   const handleSubmit = async () => {
@@ -154,6 +158,28 @@ function RequestDialog({ open, onClose, vehicle, user, onSuccess }) {
 
           <TextField label="Nº de passageiros *" size="small" type="number" value={form.passengers} onChange={set('passengers')} inputProps={{ min: 1, max: vehicle?.capacity || 99 }} fullWidth sx={inputSx} />
 
+          {exceedsCapacity && (
+          <Box
+            sx={{
+              background: '#fef2f2',
+              border: '1px solid #fca5a5',
+              borderRadius: '10px',
+              px: 2,
+              py: 1.5
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                color: '#dc2626',
+                ...f
+              }}
+            >
+              Este ônibus suporta no máximo {vehicle.capacity} passageiros.
+            </Typography>
+          </Box>
+        )}
           {/* Distância e preview de preço */}
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, alignItems: 'flex-end' }}>
             <TextField
@@ -195,7 +221,7 @@ function RequestDialog({ open, onClose, vehicle, user, onSuccess }) {
       )}
       <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
         <Button onClick={onClose} sx={{ color: '#64748b', fontWeight: 600, ...f }}>Cancelar</Button>
-        <Button onClick={handleSubmit} disabled={saving || !valid || conflict} variant="contained"
+        <Button onClick={handleSubmit} disabled={saving || !valid || conflict || exceedsCapacity} variant="contained"
           sx={{ background: '#1a56db', fontWeight: 600, borderRadius: '10px', '&:hover': { background: '#1e3a8a' }, ...f }}>
           {saving ? <CircularProgress size={18} color="inherit" /> : 'Enviar solicitação'}
         </Button>

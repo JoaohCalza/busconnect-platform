@@ -55,13 +55,22 @@ function TripStatusChip({ status }) {
 
 function StatCard({ icon, label, value, color, small }) {
   return (
-    <Box sx={{ background: '#fff', borderRadius: '14px', p: 2, border: '1px solid #f1f5f9', boxShadow: '0 1px 4px rgba(15,23,42,0.05)' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
-        <Typography sx={{ fontSize: '1.2rem' }}>{icon}</Typography>
+    <Box sx={{ background: '#ffffff',
+               border: '3px solid #1a56db',
+               boxShadow: '0 10px 30px rgba(15,23,42,0.08)',
+               borderRadius: '18px',
+               p: 3,
+               transition: '0.2s',
+               '&:hover': {
+                 transform: 'translateY(-4px)',
+                 boxShadow: '0 20px 40px rgba(15,23,42,0.12)'
+               }}}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2.5 }}>
+        <Typography sx={{ fontSize: '1.5rem' }}>{icon}</Typography>
         <Box sx={{ width: 7, height: 7, borderRadius: '50%', background: color, mt: 0.5 }} />
       </Box>
-      <Typography sx={{ fontSize: small ? '1rem' : '1.6rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.2, ...f }}>{value}</Typography>
-      <Typography sx={{ fontSize: '0.75rem', color: '#94a3b8', mt: 0.5, ...f }}>{label}</Typography>
+      <Typography sx={{ fontSize: small ? '1rem' : '1.1rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.2, ...f }}>{value}</Typography>
+      <Typography sx={{ fontSize: '0.75rem', color: '#79808a', mt: 0.9, ...f }}>{label}</Typography>
     </Box>
   )
 }
@@ -221,22 +230,31 @@ export default function AdminDashboard({ user, onLogout }) {
     { key: 'viagens',     label: 'Viagens'     },
   ]
 
-  const monthSelectSx = { borderRadius: '10px', background: '#f8fafc', fontSize: '0.78rem', fontWeight: 600, height: 32, '& fieldset': { borderColor: '#e2e8f0' }, '&.Mui-focused fieldset': { borderColor: '#1a56db', borderWidth: '2px' } }
+  const monthSelectSx = { borderRadius: '10px', background: '#f8fafc', fontSize: '0.78rem', fontWeight: 600, height: 32, '& fieldset': { borderColor: '#e2e8f0' }, '&.Mui-focused fieldset': { borderColor: '#1a56db', borderWidth: '2px' } } 
 
   return (
     <Box sx={{ minHeight: '100vh', background: '#f8fafc', ...f }}>
       <TopNavbar links={navLinks} activeTab={tab} onTab={setTab} userName={user?.name || 'Administrador'} onLogout={onLogout} />
 
       <Box sx={{ p: 4, maxWidth: 1200, mx: 'auto' }}>
-        <Box sx={{ mb: 4 }}>
-          <Typography sx={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', ...f }}>
-            {tab === 'visao-geral' && 'Visão geral'}
-            {tab === 'empresas'    && 'Gerenciar empresas'}
-            {tab === 'usuarios'   && 'Gerenciar usuários'}
-            {tab === 'viagens'    && 'Todas as viagens'}
+        <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+        <Box>
+          <Typography sx={{ fontSize: '2rem', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.03em', ...f }}>
+            {tab === 'visao-geral' && 'Visão Geral'}
+            {tab === 'empresas' && 'Gerenciar Empresas'}
+            {tab === 'usuarios' && 'Gerenciar Usuários'}
+            {tab === 'viagens' && 'Todas as Viagens'}
           </Typography>
-          <Typography sx={{ fontSize: '0.85rem', color: '#94a3b8', mt: 0.25, ...f }}>Painel de administração</Typography>
+
+          <Typography sx={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 500, ...f }}>
+            Painel de Administração 
+          </Typography>
         </Box>
+
+        <Typography sx={{ fontSize: '0.85rem', color: '#030303', fontWeight: 600, ...f }}>
+          {new Date().toLocaleDateString('pt-BR')}
+        </Typography>
+      </Box>
 
         {/* Stats */}
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 2, mb: 4 }}>
@@ -254,15 +272,15 @@ export default function AdminDashboard({ user, onLogout }) {
         {/* Visão geral */}
         {tab === 'visao-geral' && (
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3 }}>
-            <SectionCard title="Aprovações pendentes">
+            <SectionCard title="Aprovações Pendentes">
               <Box sx={{ p: 3 }}>
                 {pending.length === 0
-                  ? <Typography sx={{ fontSize: '0.85rem', color: '#94a3b8', ...f }}>Nenhuma pendência.</Typography>
+                  ? <Typography sx={{ fontSize: '0.85rem', color: '#0e0e0f', ...f }}>Nenhuma pendência.</Typography>
                   : pending.map(c => (
-                    <Box key={c.id} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 1.5, borderBottom: '1px solid #f8fafc', '&:last-child': { borderBottom: 0 } }}>
+                    <Box key={c.id} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 1.5, borderBottom: '1px solid #8b8484', '&:last-child': { borderBottom: 0 } }}>
                       <Box>
                         <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: '#0f172a', ...f }}>{c.name}</Typography>
-                        <Typography sx={{ fontSize: '0.75rem', color: '#94a3b8', ...f }}>{c.email}</Typography>
+                        <Typography sx={{ fontSize: '0.75rem', color: '#0e0e0f', ...f }}>{c.email}</Typography>
                       </Box>
                       <Box sx={{ display: 'flex', gap: 1 }}>
                         <Button size="small" onClick={() => approve(c.id)} sx={{ background: '#d1fae5', color: '#065f46', fontSize: '0.75rem', px: 1.5, minWidth: 0, '&:hover': { background: '#a7f3d0' } }}>Aprovar</Button>
@@ -274,7 +292,7 @@ export default function AdminDashboard({ user, onLogout }) {
               </Box>
             </SectionCard>
 
-            <SectionCard title="Resumo do sistema">
+            <SectionCard title="Resumo">
               <Box sx={{ p: 3 }}>
                 {[
                   { label: 'Clientes cadastrados',    value: users.filter(u => u.account_type === 'CLIENTE').length },
@@ -286,8 +304,8 @@ export default function AdminDashboard({ user, onLogout }) {
                   { label: 'Viagens concluídas',       value: trips.filter(t => t.status === 'completed').length },
                   { label: 'Receita total',            value: totalRevenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) },
                 ].map(({ label, value }) => (
-                  <Box key={label} sx={{ display: 'flex', justifyContent: 'space-between', py: 1.25, borderBottom: '1px solid #f8fafc', '&:last-child': { borderBottom: 0 } }}>
-                    <Typography sx={{ fontSize: '0.85rem', color: '#64748b', ...f }}>{label}</Typography>
+                  <Box key={label} sx={{ display: 'flex', justifyContent: 'space-between', py: 1.25, borderBottom: '1px solid #8b8484', '&:last-child': { borderBottom: 0 } }}>
+                    <Typography sx={{ fontSize: '0.85rem', color: '#0e0e0f', ...f }}>{label}</Typography>
                     <Typography sx={{ fontSize: '0.95rem', fontWeight: 700, color: '#0f172a', ...f }}>{value}</Typography>
                   </Box>
                 ))}

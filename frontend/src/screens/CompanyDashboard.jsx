@@ -89,7 +89,7 @@ export default function CompanyDashboard({ user, onLogout }) {
   const handleAddUser = async () => {
     if (!newUser.name || !newUser.email || !newUser.password) return
     try {
-      await companyAPI.addUser({ name: newUser.name, email: newUser.email, password: newUser.password, account_type: 'FUNCIONARIO', company_id: user.company_id })
+      await companyAPI.addUser({ name: newUser.name, email: newUser.email, password: newUser.password, role: newUser.role, account_type: 'FUNCIONARIO', company_id: user.company_id })
       const usersData = await companyAPI.getUsers(user.company_id)
       setUsers(usersData)
       setNewUser({ name: '', email: '', password: '', role: '' })
@@ -266,10 +266,31 @@ export default function CompanyDashboard({ user, onLogout }) {
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: '10px', background: '#f8fafc', '& fieldset': { borderColor: '#e2e8f0' }, '&.Mui-focused fieldset': { borderColor: '#1a56db', borderWidth: '2px' } } }}
             />
           ))}
+          <TextField
+              label="Função"
+              size="small"
+              fullWidth
+              value={newUser.role}
+              onChange={e =>
+                setNewUser(p => ({ ...p, role:  e.target.value }))
+              }
+              placeholder="Ex.: Motorista, Supervisor, RH..."
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '10px',
+                  background: '#f8fafc',
+                  '& fieldset': { borderColor: '#e2e8f0' },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#1a56db',
+                    borderWidth: '2px'
+                  }
+                }
+              }}
+            />
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
           <Button onClick={() => setDialogOpen(false)} sx={{ color: '#64748b', fontWeight: 600, ...f }}>Cancelar</Button>
-          <Button onClick={handleAddUser} disabled={!newUser.name || !newUser.email || !newUser.password} variant="contained"
+          <Button onClick={handleAddUser} disabled={!newUser.name || !newUser.email || !newUser.password || !newUser.role} variant="contained"
             sx={{ background: '#1a56db', fontWeight: 600, borderRadius: '10px', '&:hover': { background: '#1e3a8a' }, '&:disabled': { opacity: 0.5 }, ...f }}>
             Adicionar
           </Button>
