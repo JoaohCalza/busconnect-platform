@@ -50,7 +50,7 @@ export default function CompanyDashboard({ user, onLogout }) {
   const [saved, setSaved]     = useState(false)
   const [users, setUsers]     = useState([])
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [newUser, setNewUser] = useState({ name: '', email: '', password: '', role: '' })
+  const [newUser, setNewUser] = useState({ name: '', email: '', password: '',})
   const [deleteId, setDeleteId] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -89,10 +89,10 @@ export default function CompanyDashboard({ user, onLogout }) {
   const handleAddUser = async () => {
     if (!newUser.name || !newUser.email || !newUser.password) return
     try {
-      await companyAPI.addUser({ name: newUser.name, email: newUser.email, password: newUser.password, role: newUser.role, account_type: 'FUNCIONARIO', company_id: user.company_id })
+      await companyAPI.addUser({ name: newUser.name, email: newUser.email, password: newUser.password, account_type: 'FUNCIONARIO', company_id: user.company_id })
       const usersData = await companyAPI.getUsers(user.company_id)
       setUsers(usersData)
-      setNewUser({ name: '', email: '', password: '', role: '' })
+      setNewUser({ name: '', email: '', password: '', })
       setDialogOpen(false)
     } catch (error) {
       console.error('Falha ao adicionar usuário:', error)
@@ -107,6 +107,13 @@ export default function CompanyDashboard({ user, onLogout }) {
     } catch (error) {
       console.error('Failed to remove user:', error)
     }
+  }
+
+  const formatarAccountType = (nameAccount) => {
+    if (nameAccount == 'EMPRESA_ADMIN')
+      return 'Administrador'
+    else if (nameAccount == 'FUNCIONARIO')
+      return 'Funcionário'
   }
 
   const isApproved = Number(fields.active) === 3
@@ -231,11 +238,13 @@ export default function CompanyDashboard({ user, onLogout }) {
                               </Box>
                             </TableCell>
                             <TableCell><Typography sx={{ fontSize: '0.875rem', color: '#64748b', ...f }}>{u.email}</Typography></TableCell>
+
                             <TableCell>
-                              {u.role
-                                ? <Chip label={u.role} size="small" sx={{ background: '#f0fdf4', color: '#166534', fontWeight: 600, fontSize: '0.75rem' }} />
-                                : <Typography sx={{ fontSize: '0.75rem', color: '#cbd5e1', ...f }}>—</Typography>}
+                              <Typography sx={{ fontSize: '0.875rem', color: '#64748b', ...f }}>
+                                {formatarAccountType(u.account_type)}
+                              </Typography>
                             </TableCell>
+
                             <TableCell align="right">
                               <Button size="small" onClick={() => setDeleteId(u.id)}
                                 sx={{ border: '1px solid #fca5a5', color: '#dc2626', fontSize: '0.75rem', px: 1.5, minWidth: 0, '&:hover': { background: '#fef2f2' } }}>
@@ -266,31 +275,10 @@ export default function CompanyDashboard({ user, onLogout }) {
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: '10px', background: '#f8fafc', '& fieldset': { borderColor: '#e2e8f0' }, '&.Mui-focused fieldset': { borderColor: '#1a56db', borderWidth: '2px' } } }}
             />
           ))}
-          <TextField
-              label="Função"
-              size="small"
-              fullWidth
-              value={newUser.role}
-              onChange={e =>
-                setNewUser(p => ({ ...p, role:  e.target.value }))
-              }
-              placeholder="Ex.: Motorista, Supervisor, RH..."
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '10px',
-                  background: '#f8fafc',
-                  '& fieldset': { borderColor: '#e2e8f0' },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#1a56db',
-                    borderWidth: '2px'
-                  }
-                }
-              }}
-            />
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
           <Button onClick={() => setDialogOpen(false)} sx={{ color: '#64748b', fontWeight: 600, ...f }}>Cancelar</Button>
-          <Button onClick={handleAddUser} disabled={!newUser.name || !newUser.email || !newUser.password || !newUser.role} variant="contained"
+          <Button onClick={handleAddUser} disabled={!newUser.name || !newUser.email || !newUser.password } variant="contained"
             sx={{ background: '#1a56db', fontWeight: 600, borderRadius: '10px', '&:hover': { background: '#1e3a8a' }, '&:disabled': { opacity: 0.5 }, ...f }}>
             Adicionar
           </Button>

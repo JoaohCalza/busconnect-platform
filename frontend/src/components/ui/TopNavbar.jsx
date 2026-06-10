@@ -48,16 +48,15 @@ export default function TopNavbar({ links = [], activeTab, onTab, userName = '',
               onClick={() => onTab(key)}
               sx={{
                 px: 2.5, py: 1, borderRadius: '8px', cursor: 'pointer',
-                color: active ? '#141518' : '#64748b',
-                border: '1px solid #1a56db',
+                color: active ? '#171418' : '#64748b',
                 background: active ? '#c6cfda' : 'transparent',
                 fontWeight: active ? 600 : 500,
                 fontSize: '0.875rem',
                 fontFamily: '"Plus Jakarta Sans", sans-serif',
                 transition: 'all 0.15s',
                 '&:hover': {
-                  background: active ? '#ffeffe' : '#f8fafc',
-                  color: active ? '#141518' : '#0f172a',
+                  background: active ? '#495463' : '#c0c7ce',
+                  color: active ? '#000000' : '#000000',
                 },
               }}
             >

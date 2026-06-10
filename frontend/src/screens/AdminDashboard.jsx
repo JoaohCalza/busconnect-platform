@@ -187,7 +187,6 @@ export default function AdminDashboard({ user, onLogout }) {
   }, [])
 
   useEffect(() => {
-    if (tab !== 'viagens') return
     if (trips.length > 0) return
     setTripsLoading(true)
     tripAPI.getAll()
@@ -421,12 +420,29 @@ export default function AdminDashboard({ user, onLogout }) {
                   ))}
                 </Select>
               </FormControl>
+
               <Button
                 size="small"
+                variant="contained"
                 onClick={() => setReportOpen(true)}
-                sx={{ fontWeight: 600, fontSize: '0.78rem', borderRadius: '8px', px: 1.5,
-                  background: '#f0fdf4', color: '#166534',
-                  '&:hover': { background: '#dcfce7' }, ...f }}>
+                sx={{
+                  fontWeight: 600,
+                  fontSize: '0.78rem',
+                  borderRadius: '8px',
+                  px: 2,
+                  py: 0.7,
+                  background: '#1a56db',
+                  color: '#fff',
+                  textTransform: 'none',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                  transition: 'all 0.15s ease',
+                  '&:hover': {
+                    background: '#1a56db',
+                    boxShadow: '0 2px 5px #1a56db',
+                    transform: 'translateY(-2px) scale(1.04)',
+                  },
+                  ...f
+                }}>
                 Relatório
               </Button>
             </Box>
