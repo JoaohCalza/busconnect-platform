@@ -184,7 +184,7 @@ export default function AdminDashboard({ user, onLogout }) {
       }
     }
     loadData()
-  }, [])
+  }, [tab])
 
   useEffect(() => {
     if (trips.length > 0) return
