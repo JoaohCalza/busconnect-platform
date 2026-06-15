@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\TripRequest;
 use App\Models\Trip;
 use App\Models\Vehicle;
+use App\Models\Notification;
+use App\Models\User;
 
 class TripRequestController extends Controller
 {
@@ -83,29 +85,54 @@ class TripRequestController extends Controller
         }
 
         $tripRequest = TripRequest::create($validated);
+        // Notifica EMPRESA_ADMIN da empresa
+        $empresaAdmin = User::where('company_id', $tripRequest->company_id)
+            ->where('account_type', 'EMPRESA_ADMIN')
+            ->first();
+
+        if ($empresaAdmin) {
+            Notification::create([
+                'user_id' => $empresaAdmin->id,
+                'type'    => 'trip_request_received',
+                'message' => 'Nova solicitação de viagem recebida de ' . ($tripRequest->client->name ?? 'um cliente') . '.',
+            ]);
+        }
 
         return response()->json($tripRequest->load('company:id,name'), 201);
     }
 
-    public function updateStatus(Request $request, $id)
+        public function updateStatus(Request $request, $id)
     {
         $tripRequest = TripRequest::find($id);
+
+        // ✅ Verificar existência PRIMEIRO
         if (!$tripRequest) {
             return response()->json(['message' => 'Trip request not found'], 404);
         }
 
+        // ✅ Validar ANTES de usar $validated
         $validated = $request->validate([
             'status' => 'required|in:pending,accepted,rejected,cancelled',
         ]);
 
         $tripRequest->update($validated);
 
-        // Se aceita, criar a viagem automaticamente com preço calculado
+        // ✅ Notificação DEPOIS de tudo estar definido
+        if (in_array($validated['status'], ['accepted', 'rejected'])) {
+            Notification::create([
+                'user_id' => $tripRequest->client_id,
+                'type'    => 'trip_request_' . $validated['status'],
+                'message' => $validated['status'] === 'accepted'
+                    ? 'Sua solicitação de viagem foi aceita!'
+                    : 'Sua solicitação de viagem foi recusada pela empresa.',
+            ]);
+        }
+
+        // Se aceita, criar a viagem automaticamente
         if ($validated['status'] === 'accepted' && !$tripRequest->trip) {
             $vehicleId = $request->input('vehicle_id') ?? $tripRequest->vehicle_id;
             $driverId  = $request->input('driver_id');
 
-            // Calcular preço automaticamente: price_per_km × distance_km
             $price = null;
             if ($vehicleId && $tripRequest->distance_km) {
                 $vehicle = Vehicle::find($vehicleId);

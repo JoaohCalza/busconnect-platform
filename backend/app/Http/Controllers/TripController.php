@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Trip;
+use App\Models\Notification;
 
 class TripController extends Controller
 {
@@ -65,6 +66,13 @@ class TripController extends Controller
         ]);
 
         $trip = Trip::create($validated);
+        if ($trip->client_id) {
+            Notification::create([
+                'user_id' => $trip->client_id,
+                'type'    => 'trip_created',
+                'message' => 'Sua viagem foi confirmada e está agendada.',
+            ]);
+        }
 
         return response()->json($trip->load(['vehicle:id,brand,model,plate', 'driver:id,name']), 201);
     }
@@ -99,7 +107,13 @@ class TripController extends Controller
         }
 
         $trip->update(['status' => 'cancelled']);
-
+        if ($trip->client_id) {
+            Notification::create([
+                'user_id' => $trip->client_id,
+                'type'    => 'trip_cancelled',
+                'message' => 'Uma viagem sua foi cancelada.',
+            ]);
+        }
         return response()->json(['message' => 'Trip cancelled']);
     }
 }

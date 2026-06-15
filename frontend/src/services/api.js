@@ -106,5 +106,12 @@ export const adminAPI = {
   getCompanies:    ()   => apiCall('/admin/companies'),
   approveCompany:  (id) => apiCall(`/admin/companies/${id}/approve`, { method: 'PUT' }),
   rejectCompany:   (id) => apiCall(`/admin/companies/${id}/reject`,  { method: 'PUT' }),
+  deleteCompany: (id) => apiCall(`/admin/companies/${id}`, { method: 'DELETE' }),
   getUsers:        ()   => apiCall('/admin/users'),
+};
+
+// ── Notifications ─────────────────────────────────────────────────────────────
+export const notificationAPI = {
+  getByUser: (userId) => apiCall(`/notifications?user_id=${userId}`),
+  markRead:  (id)     => apiCall(`/notifications/${id}/read`, { method: 'PUT' }),
 };

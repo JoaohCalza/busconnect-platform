@@ -60,6 +60,8 @@ Route::put('/trips/{id}',    [TripController::class, 'update']);
 Route::delete('/trips/{id}', [TripController::class, 'destroy']);
 
 // ── Admin ─────────────────────────────────────────────────────────────────────
+use App\Models\Notification;
+
 Route::get('/admin/users', function () {
     return \App\Models\User::whereNotIn('account_type', ['ADMIN', 'EMPRESA_ADMIN'])
                 ->with('company:id,name')
@@ -73,15 +75,81 @@ Route::get('/admin/companies', function () {
 Route::put('/admin/companies/{id}/approve', function ($id) {
     $company = \App\Models\Company::find($id);
     if (!$company) return response()->json(['message' => 'Company not found'], 404);
+
     $company->active = 3;
     $company->save();
+
+    $user = \App\Models\User::where('company_id', $id)
+                ->where('account_type', 'EMPRESA_ADMIN')
+                ->first();
+
+    if ($user) {
+        Notification::create([
+            'user_id' => $user->id,
+            'type'    => 'company_approved',
+            'message' => 'Sua empresa foi aprovada! Já pode acessar todas as funcionalidades.',
+        ]);
+    }
+
     return response()->json($company);
 });
 
 Route::put('/admin/companies/{id}/reject', function ($id) {
     $company = \App\Models\Company::find($id);
     if (!$company) return response()->json(['message' => 'Company not found'], 404);
+
     $company->active = 2;
     $company->save();
+
+    $user = \App\Models\User::where('company_id', $id)
+                ->where('account_type', 'EMPRESA_ADMIN')
+                ->first();
+
+    if ($user) {
+        Notification::create([
+            'user_id' => $user->id,
+            'type'    => 'company_rejected',
+            'message' => 'Sua solicitação de cadastro foi recusada.',
+        ]);
+    }
+
     return response()->json($company);
+});
+
+Route::delete('/admin/companies/{id}', function ($id) {
+    $company = \App\Models\Company::find($id);
+    if (!$company) return response()->json(['message' => 'Company not found'], 404);
+
+    $company->active = 4;
+    $company->save();
+
+    $user = \App\Models\User::where('company_id', $id)
+                ->where('account_type', 'EMPRESA_ADMIN')
+                ->first();
+
+    if ($user) {
+        Notification::create([
+            'user_id' => $user->id,
+            'type'    => 'company_blocked',
+            'message' => 'Sua empresa foi bloqueada pelo administrador.',
+        ]);
+    }
+
+    return response()->json(['message' => 'Company blocked']);
+});
+
+// ── Notifications ─────────────────────────────────────────────────────────────
+Route::get('/notifications', function (Request $request) {
+    $userId = $request->query('user_id');
+    return Notification::where('user_id', $userId)
+                ->orderBy('created_at', 'desc')
+                ->get();
+});
+
+Route::put('/notifications/{id}/read', function ($id) {
+    $notification = Notification::find($id);
+    if (!$notification) return response()->json(['message' => 'Not found'], 404);
+    $notification->read = true;
+    $notification->save();
+    return response()->json($notification);
 });

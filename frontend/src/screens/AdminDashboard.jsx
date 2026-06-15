@@ -43,6 +43,7 @@ function CompanyStatusChip({ active }) {
     1: { label: 'Pendente',  bg: '#fef3c7', color: '#92400e' },
     2: { label: 'Rejeitada', bg: '#fee2e2', color: '#991b1b' },
     3: { label: 'Aprovada',  bg: '#d1fae5', color: '#065f46' },
+    4: { label: 'Bloqueada', bg: '#f1f5f9', color: '#475569' },
   }
   const s = map[status] || map[1]
   return <Chip label={s.label} size="small" sx={{ background: s.bg, color: s.color, fontWeight: 600, fontSize: '0.75rem' }} />
@@ -207,6 +208,15 @@ export default function AdminDashboard({ user, onLogout }) {
     }
   }
 
+  const blockCompany = async (id) => {
+  try {
+    await adminAPI.deleteCompany(id)
+    setCompanies(p => p.map(c => c.id === id ? { ...c, active: 4 } : c))
+  } catch (error) {
+    console.error('Failed to block company:', error)
+  }
+}
+
   const reject = async (id) => {
     try {
       await adminAPI.rejectCompany(id)
@@ -233,7 +243,7 @@ export default function AdminDashboard({ user, onLogout }) {
 
   return (
     <Box sx={{ minHeight: '100vh', background: '#f8fafc', ...f }}>
-      <TopNavbar links={navLinks} activeTab={tab} onTab={setTab} userName={user?.name || 'Administrador'} onLogout={onLogout} />
+      <TopNavbar links={navLinks} activeTab={tab} onTab={setTab} userName={user?.name || 'Administrador'} onLogout={onLogout} userId={user?.id} />
 
       <Box sx={{ p: 4, maxWidth: 1200, mx: 'auto' }}>
         <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
@@ -258,7 +268,7 @@ export default function AdminDashboard({ user, onLogout }) {
         {/* Stats */}
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 2, mb: 4 }}>
           <StatCard icon="👤" label="Clientes"          value={users.filter(u => u.account_type === 'CLIENTE').length}      color="#3b82f6" />
-          <StatCard icon="👷" label="Funcionários"      value={users.filter(u => u.account_type === 'FUNCIONARIO').length}  color="#8b5cf6" />
+          <StatCard icon="🧑‍💼" label="Funcionários"      value={users.filter(u => u.account_type === 'FUNCIONARIO').length}  color="#8b5cf6" />
           <StatCard icon="🏢" label="Empresas"          value={companies.length} color="#6366f1" />
           <StatCard icon="⏳" label="Pendentes"         value={pending.length}   color="#f59e0b" />
           <StatCard icon="✅" label="Aprovadas"         value={approved.length}  color="#10b981" />
@@ -337,14 +347,19 @@ export default function AdminDashboard({ user, onLogout }) {
                     <TableCell><Typography sx={{ fontSize: '0.875rem', color: '#64748b', ...f }}>{c.email}</Typography></TableCell>
                     <TableCell><CompanyStatusChip active={c.active} /></TableCell>
                     <TableCell align="right">
-                      {Number(c.active) === 1
-                        ? <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
-                            <Button size="small" onClick={() => approve(c.id)} sx={{ background: '#10b981', color: '#fff', fontSize: '0.75rem', px: 1.5, minWidth: 0, '&:hover': { background: '#059669' } }}>Aprovar</Button>
-                            <Button size="small" onClick={() => reject(c.id)}  sx={{ border: '1px solid #fca5a5', color: '#dc2626', fontSize: '0.75rem', px: 1.5, minWidth: 0, '&:hover': { background: '#fef2f2' } }}>Rejeitar</Button>
-                          </Box>
-                        : <Typography sx={{ fontSize: '0.75rem', color: '#cbd5e1', ...f }}>—</Typography>
+                    <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                      {Number(c.active) === 1 && <>
+                        <Button size="small" onClick={() => approve(c.id)} sx={{ background: '#10b981', color: '#fff', fontSize: '0.75rem', px: 1.5, minWidth: 0, '&:hover': { background: '#059669' } }}>Aprovar</Button>
+                        <Button size="small" onClick={() => reject(c.id)}  sx={{ border: '1px solid #fca5a5', color: '#dc2626', fontSize: '0.75rem', px: 1.5, minWidth: 0, '&:hover': { background: '#fef2f2' } }}>Rejeitar</Button>
+                      </>}
+                      {Number(c.active) !== 4 &&
+                        <Button size="small" onClick={() => blockCompany(c.id)} sx={{ background: '#f1f5f9', color: '#475569', fontSize: '0.75rem', px: 1.5, minWidth: 0, '&:hover': { background: '#e2e8f0' } }}>Bloquear</Button>
                       }
-                    </TableCell>
+                      {Number(c.active) === 4 &&
+                        <Typography sx={{ fontSize: '0.75rem', color: '#cbd5e1', ...f }}>Bloqueada</Typography>
+                      }
+                    </Box>
+                  </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

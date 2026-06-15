@@ -142,7 +142,7 @@ export default function CompanyDashboard({ user, onLogout }) {
 
   return (
     <Box sx={{ minHeight: '100vh', background: '#f8fafc', ...f }}>
-      <TopNavbar links={navLinks} activeTab={activeTab} onTab={setTab} userName={user?.name || 'Empresa'} onLogout={onLogout} />
+      <TopNavbar links={navLinks} activeTab={activeTab} onTab={setTab} userName={user?.name || 'Empresa'} onLogout={onLogout} userId={user?.id} />
 
       <Box sx={{ p: 4, maxWidth: 1200, mx: 'auto' }}>
 

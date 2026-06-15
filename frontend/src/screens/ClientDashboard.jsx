@@ -33,11 +33,12 @@ export default function ClientDashboard({ user, onLogout }) {
   const [tab, setTab]         = useState('catalogo')
   const [editing, setEditing] = useState(false)
   const [saved, setSaved]     = useState(false)
-  const [profile, setProfile] = useState({ name: user?.name || '', email: user?.email || '', phone: user?.phone || '', cpf: user?.cpf || '' })
+  const [profile, setProfile] = useState({ id: user?.id || null, name: user?.name || '', email: user?.email || '', phone: user?.phone || '', cpf: user?.cpf || '' })
+
 
   useEffect(() => {
     userAPI.getProfile()
-      .then(data => setProfile({ name: data.name, email: data.email, phone: data.phone || '', cpf: data.cpf ? formatarCPF(data.cpf) : '' }))
+      .then(data => setProfile({ id: data.id, name: data.name, email: data.email, phone: data.phone || '', cpf: data.cpf ? formatarCPF(data.cpf) : '' }))
       .catch(console.error)
   }, [])
 
@@ -66,7 +67,7 @@ export default function ClientDashboard({ user, onLogout }) {
 
   return (
     <Box sx={{ minHeight: '100vh', background: '#f8fafc', ...f }}>
-      <TopNavbar links={navLinks} activeTab={tab} onTab={setTab} userName={profile.name} onLogout={onLogout} />
+      <TopNavbar links={navLinks} activeTab={tab} onTab={setTab} userName={profile.name} onLogout={onLogout} userId={profile.id} />
 
       <Box sx={{ p: 4, maxWidth: 1200, mx: 'auto' }}>
 

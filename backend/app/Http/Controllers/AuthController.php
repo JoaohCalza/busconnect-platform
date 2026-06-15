@@ -7,6 +7,7 @@ use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Models\Notification;
 
 class AuthController extends Controller
 {
@@ -30,6 +31,13 @@ class AuthController extends Controller
 
         if (!$passwordValid) {
             return response()->json(['message' => 'Invalid credentials'], 401);
+        }
+
+        if ($user->company_id) {
+        $company = \App\Models\Company::find($user->company_id);
+            if ($company && $company->active == 4) {
+                return response()->json(['message' => 'Empresa bloqueada. Entre em contato com o administrador.'], 403);
+            }
         }
 
         $token = Str::random(60);
@@ -82,6 +90,17 @@ class AuthController extends Controller
         $validated['api_token'] = $token;
 
         $user = User::create($validated);
+
+        if ($request->account_type === 'EMPRESA_ADMIN') {
+        $admins = User::where('account_type', 'ADMIN')->get();
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'type'    => 'new_company_registered',
+                'message' => 'Nova empresa "' . $request->company_name . '" aguardando aprovação.',
+            ]);
+        }
+    }
 
         return response()->json([
             'user' => $this->formatUser($user),
