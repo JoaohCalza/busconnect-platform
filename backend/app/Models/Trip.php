@@ -11,13 +11,14 @@ class Trip extends Model
 
     protected $fillable = [
         'request_id', 'company_id', 'vehicle_id', 'driver_id', 'client_id',
-        'start_date', 'end_date', 'price', 'observations', 'status',
+        'start_date', 'end_date', 'price', 'commission', 'observations', 'status',
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date'   => 'date',
         'price'      => 'decimal:2',
+        'commission' => 'decimal:2',
     ];
 
     public function request()

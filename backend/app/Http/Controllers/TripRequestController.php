@@ -105,19 +105,19 @@ class TripRequestController extends Controller
     {
         $tripRequest = TripRequest::find($id);
 
-        // ✅ Verificar existência PRIMEIRO
+        // Verificar existência PRIMEIRO
         if (!$tripRequest) {
             return response()->json(['message' => 'Trip request not found'], 404);
         }
 
-        // ✅ Validar ANTES de usar $validated
+        // Validar ANTES de usar $validated
         $validated = $request->validate([
             'status' => 'required|in:pending,accepted,rejected,cancelled',
         ]);
 
         $tripRequest->update($validated);
 
-        // ✅ Notificação DEPOIS de tudo estar definido
+        // Notificação DEPOIS de tudo estar definido
         if (in_array($validated['status'], ['accepted', 'rejected'])) {
             Notification::create([
                 'user_id' => $tripRequest->client_id,
@@ -134,10 +134,13 @@ class TripRequestController extends Controller
             $driverId  = $request->input('driver_id');
 
             $price = null;
+            $commission = null;
             if ($vehicleId && $tripRequest->distance_km) {
                 $vehicle = Vehicle::find($vehicleId);
                 if ($vehicle && $vehicle->price_per_km) {
-                    $price = round((float) $vehicle->price_per_km * (float) $tripRequest->distance_km, 2);
+                    $base       = (float) $vehicle->price_per_km * (float) $tripRequest->distance_km;
+                    $commission = round($base * 0.10, 2);  // 10% Bus Connect
+                    $price      = round($base + $commission, 2); // total pago pelo cliente
                 }
             }
 
@@ -149,6 +152,7 @@ class TripRequestController extends Controller
                 'client_id'  => $tripRequest->client_id,
                 'start_date' => $tripRequest->departure_date,
                 'price'      => $price,
+                'commission' => $commission,
                 'status'     => 'scheduled',
             ]);
         }

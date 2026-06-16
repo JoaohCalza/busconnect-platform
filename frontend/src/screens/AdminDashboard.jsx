@@ -95,6 +95,7 @@ function TripReportDialog({ open, onClose, trips }) {
     cancelled:   trips.filter(t => t.status === 'cancelled').length,
   }
   const totalRevenue = trips.reduce((acc, t) => acc + (t.price != null ? Number(t.price) : 0), 0)
+  const totalCommission = trips.reduce((acc, t) => acc + (t.commission != null ? Number(t.commission) : 0), 0)
 
   const handleDownload = () => {
     const headers = ['#', 'Empresa', 'Cliente', 'Origem', 'Destino', 'Veículo', 'Placa', 'Motorista', 'Data Início', 'Data Fim', 'Status', 'Valor (R$)']
@@ -143,6 +144,12 @@ function TripReportDialog({ open, onClose, trips }) {
               {totalRevenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
             </Typography>
           </Box>
+          <Box sx={{ background: '#fef3c7', borderRadius: '12px', p: 2, border: '1px solid #fde68a', gridColumn: 'span 4' }}>
+            <Typography sx={{ fontSize: '0.72rem', fontWeight: 600, color: '#92400e', textTransform: 'uppercase', letterSpacing: '0.05em', ...f }}>Comissão BusConnect (10%)</Typography>
+            <Typography sx={{ fontSize: '1.5rem', fontWeight: 800, color: '#92400e', ...f }}>
+              {totalCommission.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            </Typography>
+          </Box>
         </Box>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
@@ -188,13 +195,12 @@ export default function AdminDashboard({ user, onLogout }) {
   }, [tab])
 
   useEffect(() => {
-    if (trips.length > 0) return
-    setTripsLoading(true)
-    tripAPI.getAll()
-      .then(setTrips)
-      .catch(console.error)
-      .finally(() => setTripsLoading(false))
-  }, [tab])
+  setTripsLoading(true)
+  tripAPI.getAll()
+    .then(setTrips)
+    .catch(console.error)
+    .finally(() => setTripsLoading(false))
+}, [tab])
 
   const pending  = companies.filter(c => Number(c.active) === 1)
   const approved = companies.filter(c => Number(c.active) === 3)
@@ -231,6 +237,7 @@ export default function AdminDashboard({ user, onLogout }) {
     .filter(t => monthFilter === 'all' || String(t.start_date).substring(5, 7) === monthFilter)
 
   const totalRevenue = trips.reduce((acc, t) => acc + (t.price != null ? Number(t.price) : 0), 0)
+  const totalCommission = trips.reduce((acc, t) => acc + (t.commission != null ? Number(t.commission) : 0), 0)
 
   const navLinks = [
     { key: 'visao-geral', label: 'Visão geral' },
@@ -276,6 +283,9 @@ export default function AdminDashboard({ user, onLogout }) {
           <StatCard icon="💰" label="Receita total"
             value={totalRevenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
             color="#16a34a" small />
+          <StatCard icon="🏦" label="Comissão BusConnect"
+            value={totalCommission.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            color="#f59e0b" small />
         </Box>
 
         {/* Visão geral */}
@@ -312,6 +322,7 @@ export default function AdminDashboard({ user, onLogout }) {
                   { label: 'Total de viagens',         value: trips.length },
                   { label: 'Viagens concluídas',       value: trips.filter(t => t.status === 'completed').length },
                   { label: 'Receita total',            value: totalRevenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) },
+                  { label: 'Comissão BusConnect (10%)', value: totalCommission.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) },
                 ].map(({ label, value }) => (
                   <Box key={label} sx={{ display: 'flex', justifyContent: 'space-between', py: 1.25, borderBottom: '1px solid #8b8484', '&:last-child': { borderBottom: 0 } }}>
                     <Typography sx={{ fontSize: '0.85rem', color: '#0e0e0f', ...f }}>{label}</Typography>

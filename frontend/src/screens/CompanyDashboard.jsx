@@ -197,7 +197,7 @@ export default function CompanyDashboard({ user, onLogout }) {
               >
                 <Box sx={{ p: 3, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3 }}>
                   <FieldRow label="Nome da empresa" value={fields.name}    editable={editing} onChange={setField('name')} />
-                  <FieldRow label="CNPJ"            value={fields.cnpj}    editable={false}   onChange={() => {}} />
+                  <FieldRow label="CNPJ"            value={fields.cnpj ? fields.cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5') : '—'} editable={false} onChange={() => {}} />
                   <FieldRow label="E-mail"          value={fields.email}   editable={editing} onChange={setField('email')} />
                   <FieldRow label="Telefone"        value={fields.phone}   editable={editing} onChange={setField('phone')} />
                   <Box sx={{ gridColumn: '1 / -1' }}>
