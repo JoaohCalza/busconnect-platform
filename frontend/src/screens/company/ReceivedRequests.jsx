@@ -154,13 +154,28 @@ function DetailDialog({ open, onClose, request, vehicles, drivers, onStatusChang
 
             {/* Valor calculado automaticamente */}
             {estimatedPrice != null ? (
-              <Box sx={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', px: 2, py: 1.25, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
-                <Typography sx={{ fontSize: '0.8rem', color: '#166534', ...f }}>
-                  Valor estimado — R$ {Number(selectedVehicle.price_per_km).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}/km × {Number(request.distance_km)} km
+              <Box sx={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', px: 2, py: 1.5, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                <Typography sx={{ fontSize: '0.72rem', fontWeight: 600, color: '#166534', ...f }}>
+                  R$ {Number(selectedVehicle.price_per_km).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}/km × {Number(request.distance_km)} km
                 </Typography>
-                <Typography sx={{ fontSize: '0.95rem', fontWeight: 700, color: '#16a34a', whiteSpace: 'nowrap', ...f }}>
-                  {estimatedPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                </Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography sx={{ fontSize: '0.8rem', color: '#64748b', ...f }}>Total (cliente paga)</Typography>
+                  <Typography sx={{ fontSize: '0.9rem', fontWeight: 700, color: '#0f172a', ...f }}>
+                    {estimatedPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography sx={{ fontSize: '0.8rem', color: '#94a3b8', ...f }}>Comissão BusConnect (10%)</Typography>
+                  <Typography sx={{ fontSize: '0.8rem', color: '#dc2626', ...f }}>
+                    − {(estimatedPrice * 0.1).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 0.5, borderTop: '1px solid #bbf7d0' }}>
+                  <Typography sx={{ fontSize: '0.8rem', fontWeight: 700, color: '#166534', ...f }}>Você recebe</Typography>
+                  <Typography sx={{ fontSize: '0.95rem', fontWeight: 800, color: '#16a34a', ...f }}>
+                    {(estimatedPrice * 0.9).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  </Typography>
+                </Box>
               </Box>
             ) : (
               <Box sx={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '10px', px: 2, py: 1.5 }}>

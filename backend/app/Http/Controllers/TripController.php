@@ -12,7 +12,7 @@ class TripController extends Controller
     {
         $query = Trip::with([
             'vehicle:id,brand,model,plate',
-            'driver:id,name',
+            'driver:id,name,cnh_category',
             'client:id,name,email',
             'company:id,name',
             'request:id,origin,destination,departure_date,departure_time,passengers',

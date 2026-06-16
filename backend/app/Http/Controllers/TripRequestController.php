@@ -139,8 +139,8 @@ class TripRequestController extends Controller
                 $vehicle = Vehicle::find($vehicleId);
                 if ($vehicle && $vehicle->price_per_km) {
                     $base       = (float) $vehicle->price_per_km * (float) $tripRequest->distance_km;
-                    $commission = round($base * 0.10, 2);  // 10% Bus Connect
-                    $price      = round($base + $commission, 2); // total pago pelo cliente
+                    $price      = round($base, 2);          // total pago pelo cliente
+                    $commission = round($base * 0.10, 2);  // 10% BusConnect — descontado do total
                 }
             }
 

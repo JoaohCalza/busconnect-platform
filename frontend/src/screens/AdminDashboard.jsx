@@ -15,6 +15,7 @@ const thStyle = { color: '#94a3b8', fontSize: '0.72rem', fontWeight: 600, textTr
 const tdStyle = { borderBottom: '1px solid #f8fafc', py: 1.5 }
 
 const toDateInput = (val) => { if (!val) return ''; return String(val).substring(0, 10) }
+const formatDate = (val) => { if (!val) return '—'; const d = new Date(String(val).substring(0, 10) + 'T00:00:00'); return d.toLocaleDateString('pt-BR') }
 
 const downloadCSV = (rows, filename) => {
   const csv = rows.map(r => r.map(c => `"${String(c ?? '').replace(/"/g, '""')}"`).join(';')).join('\n')
@@ -150,6 +151,36 @@ function TripReportDialog({ open, onClose, trips }) {
               {totalCommission.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
             </Typography>
           </Box>
+        </Box>
+        <Box sx={{ maxHeight: 260, overflowY: 'auto', border: '1px solid #f1f5f9', borderRadius: '10px' }}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ ...thStyle, py: 1 }}>#</TableCell>
+                <TableCell sx={{ ...thStyle, py: 1 }}>Empresa</TableCell>
+                <TableCell sx={{ ...thStyle, py: 1 }}>Cliente</TableCell>
+                <TableCell sx={{ ...thStyle, py: 1 }}>Rota</TableCell>
+                <TableCell sx={{ ...thStyle, py: 1 }}>Data Início</TableCell>
+                <TableCell sx={{ ...thStyle, py: 1 }}>Data Fim</TableCell>
+                <TableCell sx={{ ...thStyle, py: 1 }}>Status</TableCell>
+                <TableCell sx={{ ...thStyle, py: 1 }} align="right">Valor</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {trips.map(t => (
+                <TableRow key={t.id} sx={{ '& td': { ...tdStyle, py: 0.75 }, '&:last-child td': { borderBottom: 0 } }}>
+                  <TableCell><Typography sx={{ fontSize: '0.72rem', color: '#94a3b8', fontFamily: 'monospace' }}>#{t.id}</Typography></TableCell>
+                  <TableCell><Typography sx={{ fontSize: '0.78rem', color: '#0f172a', ...f }}>{t.company?.name || '—'}</Typography></TableCell>
+                  <TableCell><Typography sx={{ fontSize: '0.78rem', color: '#0f172a', ...f }}>{t.client?.name || '—'}</Typography></TableCell>
+                  <TableCell><Typography sx={{ fontSize: '0.78rem', color: '#0f172a', ...f }}>{[t.request?.origin, t.request?.destination].filter(Boolean).join(' → ') || '—'}</Typography></TableCell>
+                  <TableCell><Typography sx={{ fontSize: '0.78rem', color: '#64748b', ...f }}>{formatDate(t.start_date)}</Typography></TableCell>
+                  <TableCell><Typography sx={{ fontSize: '0.78rem', color: '#64748b', ...f }}>{formatDate(t.end_date)}</Typography></TableCell>
+                  <TableCell><TripStatusChip status={t.status} /></TableCell>
+                  <TableCell align="right"><Typography sx={{ fontSize: '0.78rem', fontWeight: 600, color: '#16a34a', ...f }}>{t.price ? Number(t.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '—'}</Typography></TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </Box>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
@@ -495,7 +526,8 @@ export default function AdminDashboard({ user, onLogout }) {
                       <TableCell>Veículo</TableCell>
                       <TableCell>Motorista</TableCell>
                       <TableCell>Cliente</TableCell>
-                      <TableCell>Data</TableCell>
+                      <TableCell>Data Início</TableCell>
+                      <TableCell>Data Fim</TableCell>
                       <TableCell>Valor</TableCell>
                       <TableCell>Status</TableCell>
                     </TableRow>
@@ -532,7 +564,10 @@ export default function AdminDashboard({ user, onLogout }) {
                         </TableCell>
                         <TableCell><Typography sx={{ fontSize: '0.875rem', color: '#0f172a', ...f }}>{t.client?.name || '—'}</Typography></TableCell>
                         <TableCell>
-                          <Typography sx={{ fontSize: '0.8rem', color: '#64748b', ...f }}>{toDateInput(t.start_date)}</Typography>
+                          <Typography sx={{ fontSize: '0.8rem', color: '#64748b', ...f }}>{formatDate(t.start_date)}</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography sx={{ fontSize: '0.8rem', color: '#64748b', ...f }}>{formatDate(t.end_date)}</Typography>
                         </TableCell>
                         <TableCell>
                           {t.price

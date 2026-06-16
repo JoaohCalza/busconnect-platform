@@ -86,7 +86,7 @@ function ReportDialog({ open, onClose, trips }) {
   }
 
   const handleDownload = () => {
-    const headers = ['#', 'Empresa', 'Veículo', 'Placa', 'Motorista', 'Origem', 'Destino', 'Data Início', 'Status', 'Valor (R$)']
+    const headers = ['#', 'Empresa', 'Veículo', 'Placa', 'Motorista', 'Origem', 'Destino', 'Data Início', 'Data Fim', 'Status', 'Valor (R$)']
     const rows = trips.map(t => [
       t.id,
       t.company?.name || '',
@@ -96,6 +96,7 @@ function ReportDialog({ open, onClose, trips }) {
       t.request?.origin || '',
       t.request?.destination || '',
       formatDate(t.start_date),
+      formatDate(t.end_date),
       STATUS_MAP[t.status]?.label || t.status,
       t.price != null ? Number(t.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) : '',
     ])
@@ -136,6 +137,32 @@ function ReportDialog({ open, onClose, trips }) {
             <Typography sx={{ fontSize: '0.72rem', fontWeight: 600, color: STATUS_MAP.cancelled.color, textTransform: 'uppercase', letterSpacing: '0.05em', ...f }}>Canceladas</Typography>
             <Typography sx={{ fontSize: '1.5rem', fontWeight: 800, color: STATUS_MAP.cancelled.color, ...f }}>{counts.cancelled}</Typography>
           </Box>
+        </Box>
+        <Box sx={{ maxHeight: 260, overflowY: 'auto', border: '1px solid #f1f5f9', borderRadius: '10px' }}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ ...thStyle, py: 1 }}>#</TableCell>
+                <TableCell sx={{ ...thStyle, py: 1 }}>Rota</TableCell>
+                <TableCell sx={{ ...thStyle, py: 1 }}>Data Início</TableCell>
+                <TableCell sx={{ ...thStyle, py: 1 }}>Data Fim</TableCell>
+                <TableCell sx={{ ...thStyle, py: 1 }}>Status</TableCell>
+                <TableCell sx={{ ...thStyle, py: 1 }} align="right">Valor</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {trips.map(t => (
+                <TableRow key={t.id} sx={{ '& td': { ...tdStyle, py: 0.75 }, '&:last-child td': { borderBottom: 0 } }}>
+                  <TableCell><Typography sx={{ fontSize: '0.72rem', color: '#94a3b8', fontFamily: 'monospace' }}>#{t.id}</Typography></TableCell>
+                  <TableCell><Typography sx={{ fontSize: '0.78rem', color: '#0f172a', ...f }}>{[t.request?.origin, t.request?.destination].filter(Boolean).join(' → ') || '—'}</Typography></TableCell>
+                  <TableCell><Typography sx={{ fontSize: '0.78rem', color: '#64748b', ...f }}>{formatDate(t.start_date)}</Typography></TableCell>
+                  <TableCell><Typography sx={{ fontSize: '0.78rem', color: '#64748b', ...f }}>{formatDate(t.end_date)}</Typography></TableCell>
+                  <TableCell><StatusChip status={t.status} /></TableCell>
+                  <TableCell align="right"><Typography sx={{ fontSize: '0.78rem', fontWeight: 600, color: '#16a34a', ...f }}>{t.price ? Number(t.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '—'}</Typography></TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </Box>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
