@@ -466,16 +466,16 @@ export default function CompanyTrips({ companyId }) {
                   </TableCell>
                   <TableCell><Typography sx={{ fontSize: '0.875rem', color: '#0f172a', ...f }}>{t.client?.name || '—'}</Typography></TableCell>
                   <TableCell>
-                    <Typography sx={{ fontSize: '0.8rem', color: '#64748b', ...f }}>{toDateInput(t.start_date)}</Typography>
+                    <Typography sx={{ fontSize: '0.8rem', color: '#64748b', whiteSpace: 'nowrap', ...f }}>{formatDate(t.start_date)}</Typography>
                   </TableCell>
                   <TableCell>
                     {t.price ? (
                       <>
-                        <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: '#16a34a', ...f }}>
+                        <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: '#16a34a', whiteSpace: 'nowrap', ...f }}>
                           R$ {Number(t.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                         </Typography>
                         {t.commission != null && (
-                          <Typography sx={{ fontSize: '0.72rem', color: '#94a3b8', ...f }}>
+                          <Typography sx={{ fontSize: '0.72rem', color: '#94a3b8', whiteSpace: 'nowrap', ...f }}>
                             Líq. {(Number(t.price) - Number(t.commission)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                           </Typography>
                         )}

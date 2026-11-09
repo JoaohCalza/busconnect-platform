@@ -51,12 +51,12 @@ export default function TopNavbar({ links = [], activeTab, onTab, userName = '',
       borderBottom: '2px solid #1a56db',
       boxShadow: '0 1px 8px rgba(15,23,42,0.06)',
       display: 'flex', alignItems: 'center',
-      px: 4, height: 72, gap: 3,
+      px: 4, height: 72, gap: { xs: 2, xl: 3 },
     }}>
       {/* Logo */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mr: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mr: { xs: 0, xl: 2 }, flexShrink: 0 }}>
         <img src={busconnect} alt="Bus Connect" style={{ width: 50, height: 50, objectFit: 'contain', background: '#ffffff' }} />
-        <Typography sx={{ fontWeight: 800, fontSize: '1.3rem', color: '#0f172a', letterSpacing: '-0.01em', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+        <Typography sx={{ fontWeight: 800, fontSize: '1.3rem', color: '#0f172a', letterSpacing: '-0.01em', fontFamily: '"Plus Jakarta Sans", sans-serif', whiteSpace: 'nowrap' }}>
           Bus Connect
         </Typography>
       </Box>
@@ -69,7 +69,7 @@ export default function TopNavbar({ links = [], activeTab, onTab, userName = '',
           const active = activeTab === key
           return (
             <Box key={key} onClick={() => onTab(key)} sx={{
-              px: 2.5, py: 1, borderRadius: '8px', cursor: 'pointer',
+              px: { xs: 1.5, xl: 2.5 }, py: 1, borderRadius: '8px', cursor: 'pointer', whiteSpace: 'nowrap',
               color: active ? '#171418' : '#64748b',
               background: active ? '#c6cfda' : 'transparent',
               fontWeight: active ? 600 : 500,
@@ -85,7 +85,7 @@ export default function TopNavbar({ links = [], activeTab, onTab, userName = '',
       </Box>
 
       {/* Right */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
 
         {/* Sino */}
         <Box ref={ref} sx={{ position: 'relative' }}>
@@ -149,7 +149,7 @@ export default function TopNavbar({ links = [], activeTab, onTab, userName = '',
           }}>
             {initials || '?'}
           </Avatar>
-          <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: '#0f172a', fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+          <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: '#0f172a', fontFamily: '"Plus Jakarta Sans", sans-serif', whiteSpace: 'nowrap' }}>
             {userName}
           </Typography>
         </Box>

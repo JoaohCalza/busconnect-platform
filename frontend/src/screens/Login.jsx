@@ -322,6 +322,7 @@ export default function LoginScreen({ onLoginSuccess }) {
       <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
       <Box sx={{
         minHeight: '100vh', width: '100%', display: 'flex',
+        justifyContent: 'center', gap: { md: 2, lg: 6 },
         background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 40%, #e0e7ff 100%)',
         position: 'relative', overflow: 'hidden',
       }}>
@@ -329,7 +330,7 @@ export default function LoginScreen({ onLoginSuccess }) {
         {/* ── Painel esquerdo ── */}
         <Box sx={{
           display: { xs: 'none', md: 'flex' },
-          width: '45%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
+          width: 400, flexShrink: 0, flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
           p: 6, position: 'sticky', top: 0, height: '100vh', alignSelf: 'flex-start',
           opacity: montado ? 1 : 0, transform: montado ? 'none' : 'translateX(-30px)',
           transition: 'all 0.7s ease',
@@ -376,7 +377,7 @@ export default function LoginScreen({ onLoginSuccess }) {
         </Box>
 
         {/* ── Direita — formulário ── */}
-        <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', p: { xs: 3, sm: 4 } }}>
+        <Box sx={{ flex: { xs: 1, md: '0 1 500px' }, display: 'flex', alignItems: 'center', justifyContent: 'center', p: { xs: 3, sm: 4 } }}>
           <Box sx={{
             width: '100%', maxWidth: 420, minHeight: 540,
             background: '#fff', borderRadius: '20px',

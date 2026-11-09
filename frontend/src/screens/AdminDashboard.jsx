@@ -160,7 +160,7 @@ function TripReportDialog({ open, onClose, trips }) {
                 <TableCell sx={{ ...thStyle, py: 1 }}>Empresa</TableCell>
                 <TableCell sx={{ ...thStyle, py: 1 }}>Cliente</TableCell>
                 <TableCell sx={{ ...thStyle, py: 1 }}>Rota</TableCell>
-                <TableCell sx={{ ...thStyle, py: 1 }}>Data Início</TableCell>
+                <TableCell sx={{ ...thStyle, py: 1, whiteSpace: 'nowrap' }}>Data Início</TableCell>
                 <TableCell sx={{ ...thStyle, py: 1 }}>Data Fim</TableCell>
                 <TableCell sx={{ ...thStyle, py: 1 }}>Status</TableCell>
                 <TableCell sx={{ ...thStyle, py: 1 }} align="right">Valor</TableCell>
@@ -526,7 +526,7 @@ export default function AdminDashboard({ user, onLogout }) {
                       <TableCell>Veículo</TableCell>
                       <TableCell>Motorista</TableCell>
                       <TableCell>Cliente</TableCell>
-                      <TableCell>Data Início</TableCell>
+                      <TableCell sx={{ whiteSpace: 'nowrap' }}>Data Início</TableCell>
                       <TableCell>Data Fim</TableCell>
                       <TableCell>Valor</TableCell>
                       <TableCell>Status</TableCell>
@@ -564,14 +564,14 @@ export default function AdminDashboard({ user, onLogout }) {
                         </TableCell>
                         <TableCell><Typography sx={{ fontSize: '0.875rem', color: '#0f172a', ...f }}>{t.client?.name || '—'}</Typography></TableCell>
                         <TableCell>
-                          <Typography sx={{ fontSize: '0.8rem', color: '#64748b', ...f }}>{formatDate(t.start_date)}</Typography>
+                          <Typography sx={{ fontSize: '0.8rem', color: '#64748b', whiteSpace: 'nowrap', ...f }}>{formatDate(t.start_date)}</Typography>
                         </TableCell>
                         <TableCell>
-                          <Typography sx={{ fontSize: '0.8rem', color: '#64748b', ...f }}>{formatDate(t.end_date)}</Typography>
+                          <Typography sx={{ fontSize: '0.8rem', color: '#64748b', whiteSpace: 'nowrap', ...f }}>{formatDate(t.end_date)}</Typography>
                         </TableCell>
                         <TableCell>
                           {t.price
-                            ? <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: '#16a34a', ...f }}>R$ {Number(t.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Typography>
+                            ? <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: '#16a34a', whiteSpace: 'nowrap', ...f }}>R$ {Number(t.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Typography>
                             : <Typography sx={{ fontSize: '0.8rem', color: '#cbd5e1', ...f }}>—</Typography>}
                         </TableCell>
                         <TableCell><TripStatusChip status={t.status} /></TableCell>

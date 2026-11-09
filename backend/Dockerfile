@@ -31,4 +31,4 @@ RUN chmod -R 777 storage bootstrap/cache
 EXPOSE 8000
 
 # migrate --force aplica todas as migrations incluindo as do Sanctum
-CMD sh -c "sleep 10 && php artisan vendor:publish --provider='Laravel\\Sanctum\\SanctumServiceProvider' --no-interaction && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000"
+CMD sh -c "sleep 10 && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000"
