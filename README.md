@@ -31,6 +31,7 @@ Clientes encontram veículos e solicitam viagens. Empresas gerenciam frota, moto
 - [Regras de negócio](#regras-de-negócio)
 - [API](#api)
 - [Modelo de dados](#modelo-de-dados)
+- [Autores](#autores)
 
 ---
 
@@ -307,8 +308,21 @@ users ──< notifications
 
 ---
 
-<div align="center">
+## Autores
 
-Desenvolvido por <a href="https://github.com/JoaohCalza">JoaohCalza</a>
-
-</div>
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/JoaohCalza">
+        <img src="https://github.com/JoaohCalza.png" width="90" alt="João Henrique Calza" /><br />
+        <sub><b>João Henrique Calza</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/ErikDeChavesLavarda">
+        <img src="https://github.com/ErikDeChavesLavarda.png" width="90" alt="Erik De Chaves Lavarda" /><br />
+        <sub><b>Erik De Chaves Lavarda</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
